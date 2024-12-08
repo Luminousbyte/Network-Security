@@ -38,3 +38,30 @@ DATA_VALIDATION_INVALID_DIR: str = "invalid"
 DATA_VALIDATION_DRIFT_REPORT_DIR: str = "drift_report"
 DATA_VALIDATION_DRIFT_REPORT_FILE_NAME: str = "report.yaml"
 PREPROCESSING_OBJECT_FILE_NAME = "preprocessing.pkl"
+
+"""
+Data Transformation related constant start with DATA_TRANSFORMATION VAR NAME
+"""
+DATA_TRANFORMATION_DIR_NAME: str = "data_transfromation"
+DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR: str = "transfromed"
+DATA_TRANSFORMATION_TRANFORMED_OBJECT_DIR: str = "transfromed_object"
+
+# KNN imputer to replace the "nan" values
+DATA_TRANSFORMATION_IMPUTER_PARAMETERS: dict = {"missing_values": np.nan,
+                                                "n_neighbors": 3,
+                                                "weights": "uniform"}
+
+DATA_TRANSFORMATION_TRAIN_FILE_PATH: str = "train.npy"
+
+DATA_TRANSFORMATION_TEST_FILE_PATH: str = "test.npy"
+
+"""
+Model Trainer related constant start with MODEL TRAINER VAR NAME
+"""
+MODEL_TRAINER_DIR_NAME: str = "model_trainer"
+MODEL_TRAINER_TRAINED_MODEL_DIR: str = "trained_model"
+MODEL_TRAINER_TRAINED_MODEL_NAME: str = "model.pkl"
+MODEL_TRAINER_EXPECTED_SCORE: float = 0.6
+MODEL_TRAINER_OVER_FITTING_UNDER_FITTING_THRESHOLD: float = 0.05
+
+TRAINING_BUCKET_NAME = "networksecurity"

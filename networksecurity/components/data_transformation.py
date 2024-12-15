@@ -44,7 +44,7 @@ class DataTransformation:
         """
         logging.info("Entered get_data_transformer_object method of Transformation class.")
         try:
-            imputer: KNNImputer = KNNImputer(**DATA_TRANSFORMATION_IMPUTER_PARAMETERS)
+            imputer: KNNImputer = KNNImputer(**DATA_TRANSFORMATION_IMPUTER_PARAMETERS) # ** because it is key value pair. 
             logging.info(f"Initialise KNNImputer with {DATA_TRANSFORMATION_IMPUTER_PARAMETERS}")
             processor: Pipeline = Pipeline([("imputer", imputer)])
             return processor
@@ -74,7 +74,7 @@ class DataTransformation:
             transformed_input_train_feature = preprocessor_object.transform(input_feature_train_df)
             transformed_input_test_feature = preprocessor_object.transform(input_feature_test_df)
 
-            train_arr = np.c_[transformed_input_train_feature, np.array(target_feature_train_df)]
+            train_arr = np.c_[transformed_input_train_feature, np.array(target_feature_train_df)] # np.c_ is for combine
             test_arr = np.c_[transformed_input_test_feature, np.array(target_feature_test_df)]
 
             # Save Numpy array data

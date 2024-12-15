@@ -22,6 +22,14 @@ from sklearn.ensemble import (AdaBoostClassifier, GradientBoostingClassifier, Ra
 import mlflow
 from urllib.parse import urlparse
 
+import dagshub
+
+dagshub.init(repo_owner='Luminousbyte', repo_name='Network-Security', mlflow=True)
+
+os.environ["MLFLOW_TRACKING_URI"] = "https://dagshub.com/Luminousbyte/Network-Security.mlflow"
+os.environ["MLFLOW_TRACKING_USERNAME"] = "Luminousbyte"
+os.environ["MLFLOW_TRACKING_PASSWORD"] = "652651d5cb56526c2d330d69858078e93ced17e3"
+
 class ModelTrainer:
     def __init__(self, model_trainer_config: ModelTrainerConfig, data_transformation_artifact: DataTransformationArtifact):
         try:
@@ -29,6 +37,33 @@ class ModelTrainer:
             self.data_transformation_artifact = data_transformation_artifact
         except Exception as e:
             raise NetworkSecurityException(e, sys)
+        
+
+    def track_mlflow(self, best_model, classificationmetric):
+        # Set the registry URI
+        mlflow.set_registry_uri("https://dagshub.com/Luminousbyte/Network-Security.mlflow")
+        tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
+
+        # Extract metrics
+        f1_score = classificationmetric.f1_score
+        precision_score = classificationmetric.precision_score
+        recall_score = classificationmetric.recall_score
+
+        # Start an MLflow run
+        with mlflow.start_run():
+            # Log metrics
+            mlflow.log_metric("f1_score", f1_score)
+            mlflow.log_metric("precision", precision_score)
+            mlflow.log_metric("recall_score", recall_score)
+
+            # Log the model
+            mlflow.sklearn.log_model(best_model, "model")
+
+            # Register the model if tracking URI is not local
+            if tracking_url_type_store != "file":
+                model_name = "best_model"  # Provide a descriptive string for your model
+                mlflow.sklearn.log_model(best_model, "model", registered_model_name=model_name)
+
         
     def train_model(self, X_train, y_train, X_test, y_test):
         models = {"Random Forest": RandomForestClassifier(verbose = 1),
@@ -80,13 +115,13 @@ class ModelTrainer:
         classification_train_metric = get_classification_score(y_true = y_train, y_pred = y_train_pred)
 
         ## Track the experiements with mlflow
-        # self.track_mlflow(best_model,classification_train_metric)
+        self.track_mlflow(best_model,classification_train_metric)
 
 
         y_test_pred=best_model.predict(X_test)
         classification_test_metric=get_classification_score(y_true=y_test,y_pred=y_test_pred)
 
-        # self.track_mlflow(best_model,classification_test_metric)
+        self.track_mlflow(best_model,classification_test_metric)
 
         preprocessor = load_object(file_path=self.data_transformation_artifact.transformed_object_file_path)
             
